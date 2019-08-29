@@ -1,0 +1,159 @@
+---
+title: "Assignment-Loading Data into a Data Frame"
+author: "Anil Akyildirim"
+date: "8/29/2019"
+output:
+  html_document:
+    toc: true
+    toc_depth: 2
+    code_folding: hide
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Assignment Brief
+
+In this assignment, we have been asked to use R, take a data set in a certain form and make certain transformations for easier downstream analysis. 
+
+The full details of the assignment can be found [here](https://github.com/anilak1978/data-acquisition-management-mushroom-data-set/blob/master/Assignment%20Basic%20Loading%20and%20Transformation.pdf)
+
+As per the full assignment brief the task can be broken down into below sub tasks;
+
+1. Study the Dataset and the Associated Description Data (i.e "data dictionary")
+2. Import the data and create a data frame with subsets of columns. Include column that indicates edible or poisonous.
+3. Add meaningful column names and replace the abbreviations used in the data.
+
+## About the Data
+
+The data set repository and full details can be found in UCI repository [here](https://archive.ics.uci.edu/ml/datasets/Mushroom). In order to make it convinient to import the data set to our R markdown, I have added the raw data file into my github repo, which can be found [here](https://raw.githubusercontent.com/anilak1978/data-acquisition-management-mushroom-data-set/master/agaricus-lepiota.data)
+
+As per the UCI repository, the attribute information is as below:
+
+Attribute Information:
+
+1. cap-shape: bell=b,conical=c,convex=x,flat=f, knobbed=k,sunken=s 
+2. cap-surface: fibrous=f,grooves=g,scaly=y,smooth=s 
+3. cap-color: brown=n,buff=b,cinnamon=c,gray=g,green=r, pink=p,purple=u,red=e,white=w,yellow=y 
+4. bruises?: bruises=t,no=f 
+5. odor: almond=a,anise=l,creosote=c,fishy=y,foul=f, musty=m,none=n,pungent=p,spicy=s 
+6. gill-attachment: attached=a,descending=d,free=f,notched=n 
+7. gill-spacing: close=c,crowded=w,distant=d 
+8. gill-size: broad=b,narrow=n 
+9. gill-color: black=k,brown=n,buff=b,chocolate=h,gray=g, green=r,orange=o,pink=p,purple=u,red=e, white=w,yellow=y 
+10. stalk-shape: enlarging=e,tapering=t 
+11. stalk-root: bulbous=b,club=c,cup=u,equal=e, rhizomorphs=z,rooted=r,missing=? 
+12. stalk-surface-above-ring: fibrous=f,scaly=y,silky=k,smooth=s 
+13. stalk-surface-below-ring: fibrous=f,scaly=y,silky=k,smooth=s 
+14. stalk-color-above-ring: brown=n,buff=b,cinnamon=c,gray=g,orange=o, pink=p,red=e,white=w,yellow=y 
+15. stalk-color-below-ring: brown=n,buff=b,cinnamon=c,gray=g,orange=o, pink=p,red=e,white=w,yellow=y 
+16. veil-type: partial=p,universal=u 
+17. veil-color: brown=n,orange=o,white=w,yellow=y 
+18. ring-number: none=n,one=o,two=t 
+19. ring-type: cobwebby=c,evanescent=e,flaring=f,large=l, none=n,pendant=p,sheathing=s,zone=z 
+20. spore-print-color: black=k,brown=n,buff=b,chocolate=h,green=r, orange=o,purple=u,white=w,yellow=y 
+21. population: abundant=a,clustered=c,numerous=n, scattered=s,several=v,solitary=y 
+22. habitat: grasses=g,leaves=l,meadows=m,paths=p, urban=u,waste=w,woods=d
+
+## Import the Data and Create a Data Frame
+
+```{r}
+# import the data set using read.csv function with no columns.
+
+mushrooms<- read.csv('https://raw.githubusercontent.com/anilak1978/data-acquisition-management-mushroom-data-set/master/agaricus-lepiota.data', header=FALSE, sep=',')
+
+#overview of the data
+head(mushrooms)
+
+```
+
+When we look at the data frame "mushrooms), we see 23 columns, however the data set information provided states that there are 22 attributes. This is because the first column (V1) attribute is if the mushroom is poisinous or not. If the musroom is posinous, the value of the attribute is "p", if it is e, the value is "edible". Let's assign column names to our data frame. 
+
+### Assign Column Names
+
+```{r}
+# adding column names defined in the data set information provided by UCI Repository
+colnames(mushrooms)<- c('edibility', 
+                        'cap-shape', 
+                        'cap-surface', 
+                        'cap-color', 
+                        'bruises', 
+                        'odor', 
+                        'gill-attachment', 
+                        'gill-spacing', 
+                        'gill-size', 
+                        'gill-color', 
+                        'stalk-shape', 
+                        'stalk-root', 
+                        'stalk-surface-above-ring', 
+                        'stalk-surface-below-ring', 
+                        'stalk-color-above-ring', 
+                        'stalk-color-below-ring', 
+                        'veil-type', 
+                        'veil-color', 
+                        'ring-number', 
+                        'ring-type', 
+                        'spore-pint', 
+                        'population', 
+                        'habitat')
+
+# overview of the data
+head(mushrooms)
+```
+I have used the attribute information provided in the data set as column names. I used "edibility" as the column name since it states if the mushroom is posinous or edible. As part of our next step; we will subset the columns; utilizing 4 attributes(features)including edibility. 
+
+### Subset the data frame  
+
+```{r}
+# subset data frame mushrooms and create a new data frame called mushrooms_subset
+
+mushrooms_subset <- subset(mushrooms, select = c(1:5))
+head(mushrooms_subset)
+
+```
+For no particular reason, following the assignment, i selected so subset the first 5 attributes in the "mushrooms" database which included the column data indicates if the mushroom is edible or poisionous. ("ediblity")
+
+## Replace the abbreviations
+
+```{r}
+# first look at the structure of mushrooms_subset data frame to see the levels of each attribute
+str(mushrooms_subset)
+
+```
+We can see edibility has 2, can-shape 6, can-surface 4, cap-color 10 and bruises has 2 levels. We can use the attribute information to replace the abbreviations in the data frame.
+
+```{r}
+# target each level value , replace the old name with new.
+
+levels(mushrooms_subset$edibility)[levels(mushrooms_subset$edibility)=='e']<-'edible'
+levels(mushrooms_subset$edibility)[levels(mushrooms_subset$edibility)=='p']<-'poisonous'
+levels(mushrooms_subset$`cap-shape`)[levels(mushrooms_subset$`cap-shape`)=='b']<-'bell'
+levels(mushrooms_subset$`cap-shape`)[levels(mushrooms_subset$`cap-shape`)=='c']<-'conical'
+levels(mushrooms_subset$`cap-shape`)[levels(mushrooms_subset$`cap-shape`)=='x']<-'convex'
+levels(mushrooms_subset$`cap-shape`)[levels(mushrooms_subset$`cap-shape`)=='f']<-'flat'
+levels(mushrooms_subset$`cap-shape`)[levels(mushrooms_subset$`cap-shape`)=='k']<-'knobbed'
+levels(mushrooms_subset$`cap-shape`)[levels(mushrooms_subset$`cap-shape`)=='s']<-'sunken'
+levels(mushrooms_subset$`cap-surface`)[levels(mushrooms_subset$`cap-surface`)=='f']<-'fibrous'
+levels(mushrooms_subset$`cap-surface`)[levels(mushrooms_subset$`cap-surface`)=='g']<-'grooves'
+levels(mushrooms_subset$`cap-surface`)[levels(mushrooms_subset$`cap-surface`)=='y']<-'scaly'
+levels(mushrooms_subset$`cap-surface`)[levels(mushrooms_subset$`cap-surface`)=='s']<-'smooth'
+levels(mushrooms_subset$`cap-color`)[levels(mushrooms_subset$`cap-color`)=='n']<-'brown'
+levels(mushrooms_subset$`cap-color`)[levels(mushrooms_subset$`cap-color`)=='b']<-'buff'
+levels(mushrooms_subset$`cap-color`)[levels(mushrooms_subset$`cap-color`)=='c']<-'cinnamon'
+levels(mushrooms_subset$`cap-color`)[levels(mushrooms_subset$`cap-color`)=='g']<-'gray'
+levels(mushrooms_subset$`cap-color`)[levels(mushrooms_subset$`cap-color`)=='r']<-'green'
+levels(mushrooms_subset$`cap-color`)[levels(mushrooms_subset$`cap-color`)=='p']<-'pink'
+levels(mushrooms_subset$`cap-color`)[levels(mushrooms_subset$`cap-color`)=='u']<-'purple'
+levels(mushrooms_subset$`cap-color`)[levels(mushrooms_subset$`cap-color`)=='e']<-'red'
+levels(mushrooms_subset$`cap-color`)[levels(mushrooms_subset$`cap-color`)=='w']<-'white'
+levels(mushrooms_subset$`cap-color`)[levels(mushrooms_subset$`cap-color`)=='y']<-'yellow'
+levels(mushrooms_subset$bruises)[levels(mushrooms_subset$bruises)=='t']<-'yes'
+levels(mushrooms_subset$bruises)[levels(mushrooms_subset$bruises)=='f']<-'no'
+
+#overview of the mushrooms_subset data frame with new row values.
+
+head(mushrooms_subset)
+```
+This completes the Loading Data into a Data Frame Assignment for Data Acqusition and Management DATA 607 class. 
+
